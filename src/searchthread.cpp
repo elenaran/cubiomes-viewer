@@ -559,7 +559,7 @@ void SearchMaster::preSearch()
     if (searchtype == SEARCH_RANDOM)
     {
         smax = MASK48;
-        seed = sstart;
+        seed = sstart = 0;
         if (seed < smin)
             seed = smin;
         prog = seed - smin;
@@ -1120,13 +1120,13 @@ void SearchWorker::run()
         break;
 
     case SEARCH_RANDOM:
+        uint64_t rng;
         while (!*env.stop && getNextItem())
         {
             seed = sstart;
-            for (int i = 0; i < scnt; i++)
+            for (uint64_t i = 0; i < (uint64_t) scnt; i++)
             {
-                uint64_t rng;
-                setSeed(&rng, i);
+                setSeed(&rng, seed);
                 rng = nextLong(&rng);
                 env.setSeed(rng);
                 if (testTreeAt(origin, &env, PASS_FULL_64, nullptr) == COND_OK)
